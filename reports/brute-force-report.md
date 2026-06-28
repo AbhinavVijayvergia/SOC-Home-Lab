@@ -23,16 +23,39 @@ index=main source="WinEventLog:Security" EventCode=4625 Logon_Type=8
 - 16:16:20 — 6 failed SSH authentication attempts recorded
 - All attempts within 1 second — consistent with automated tool
 
+## Attack Vectors Attempted
+### SMB (Port 445) — Failed
+- Tool: Hydra
+- Reason: Windows SMB signing enabled and required — blocked 
+  Hydra from authenticating, no 4625 events generated
+
+### RDP (Port 3389) — Failed
+- Tool: Hydra
+- Reason: Windows 11 Home does not support inbound RDP — 
+  connection rejected before logon stage
+
+### SSH (Port 22) — Success
+- Tool: Hydra v9.6
+- OpenSSH Server installed on Windows 11 Home
+- 12 failed logon attempts generated and detected in Splunk
+
 ## Indicators of Compromise (IOCs)
 - Source IP: Not captured (SSH logging limitation on Windows Home)
 - Target Account: ECO$ (machine account)
 - Target Port: 22 (SSH)
 - Tool Used (lab): Hydra v9.6
 
-## Limitations
-- Windows Home SSH does not log source IP in 4625 events
-- Machine account (ECO$) logged instead of target username (Acer)
-- Sysmon required for complete SSH attack visibility
+## Lab Limitations & Findings
+- Nmap SYN scan generated zero Windows Event Log entries
+  — network reconnaissance is invisible to default Windows logging
+- Nmap source IP not captured in any Splunk event
+- SSH brute force logged machine account (ECO$) instead of target 
+  username (Acer) — Windows Home SSH logging limitation
+- Source IP not captured in 4625 events for SSH attacks
+- PowerShell credential simulation generated 4625 events but source 
+  showed ::1 (localhost) not an external IP
+- Conclusion: Default Windows Event Logs have significant blind spots.
+  Sysmon required for complete visibility.
 
 ## Recommendation
 - Deploy Sysmon for network connection logging
