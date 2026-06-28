@@ -1,8 +1,8 @@
-# SOC Home Lab
+# SOC Home Lab: Splunk SIEM & Attack Detection
+> A hands-on blue team lab simulating real-world attack detection using Splunk SIEM on a Windows 11 host with Kali Linux as the attacker machine.
 
-> A hands-on blue team lab simulating real-world attack detection 
-> using Splunk SIEM on a Windows 11 host with Kali Linux as the 
-> attacker machine.
+**Executive Summary**
+Deployed a Splunk SIEM environment to ingest Windows Event Logs, simulate network reconnaissance and brute-force attacks, and write custom SPL alerts for active intrusion detection. This lab demonstrates practical skills in log analysis, threat hunting, and SIEM rule creation.
 
 ## Lab Architecture
 See [architecture/lab-diagram.md](architecture/lab-diagram.md)
