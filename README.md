@@ -63,7 +63,7 @@ Logs are ingested locally into Splunk Enterprise directly from the host machine:
 | Brute Force — Local | 4625 | Type 2 failures > 5 |
 
 ### Brute Force Detection in Splunk
-![Splunk 4625 Alert](investigations/splunk-brute-force.png)
+![Splunk 4625 Alert](architecture/splunk-brute-force.png)
 
 
 ## Key Findings
