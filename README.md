@@ -1,36 +1,75 @@
-
 # SOC Home Lab
 
-## Environment
-- Host: Windows (Splunk SIEM)
-- Attacker VM: Kali Linux (VMware)
+> A hands-on blue team lab simulating real-world attack detection 
+> using Splunk SIEM on a Windows 11 host with Kali Linux as the 
+> attacker machine.
+
+## Lab Architecture
+See [architecture/lab-diagram.md](architecture/lab-diagram.md)
+
+**Quick Overview:**
+- Host: Windows 11 Home — Target machine + Splunk SIEM
+- Attacker: Kali Linux (VMware) — Attack simulation
+- SIEM: Splunk Enterprise (Free License)
+
+## Tools & Versions
+- Splunk Enterprise 10.4.0 — Free License
+- Nmap 7.98
+- Hydra v9.6
+- VMware Workstation
+- Kali Linux 2025.4
+
+## Repository Structure
+    SOC-Home-Lab/
+    ├── architecture/
+    │   └── lab-diagram.md
+    ├── setup/
+    │   └── 01-splunk-install.md
+    ├── investigations/
+    │   ├── 2026-06-18-nmap-scan.md
+    │   └── 2026-06-28-ssh-brute-force.md
+    ├── splunk-queries/
+    │   └── spl-library.md
+    └── README.md
 
 ## Status
 - [x] Phase 1: Environment setup
 - [x] Phase 2: Splunk installed, Windows logs ingesting
-- [x] Phase 3: Attack simulation (Nmap scan + SSH brute force complete)
+- [x] Phase 3: Attack simulation (Nmap scan + SSH brute force)
 - [x] Phase 4: Detection + incident reports
-- [ ] Phase 5: Full documentation
+- [x] Phase 5: Full documentation
 
 ## Log Sources
-- WinEventLog:Security (35,743+ events)
-- WinEventLog:System
-- WinEventLog:Application
+- WinEventLog:Security — 35,743+ events and growing
+- WinEventLog:System — 37,307+ events and growing
+- WinEventLog:Application — 22,491+ events and growing
 
-## Tools & Techniques
-- Nmap 7.98 — network reconnaissance, port scanning
-- Hydra v9.6 — SSH brute force simulation
-- SPL — custom detection queries and automated alerts
-- Windows Event Logs — EventCodes 4624, 4625, 4648, 4688
+## Investigations
+| Date | Attack | Severity | Report |
+|------|--------|----------|--------|
+| 2026-06-18 | Nmap SYN Scan | Low | [View](investigations/2026-06-18-nmap-scan.md) |
+| 2026-06-28 | SSH Brute Force | Medium | [View](investigations/2026-06-28-ssh-brute-force.md) |
 
-## Findings Log
-### Nmap Scan — 2026-06-18
-- 9 open ports discovered on Windows host
-- Notable: SMB (445), MySQL (3306), Splunkd (8089) exposed
-- OS fingerprinting returned incorrect result (XP/7/2012)
+## Detection Rules Built
+| Rule | EventCode | Trigger |
+|------|-----------|---------|
+| Brute Force — Network | 4625 | Type 8 failures > 3 |
+| Brute Force — Local | 4625 | Type 2 failures > 5 |
 
-### SSH Brute Force — 2026-06-28
-- Simulated brute force using Hydra from Kali Linux
-- 12 failed logon attempts detected (EventCode 4625, Logon Type 8)
-- Detection rule built in SPL, saved as automated Splunk alert
-- Incident report written: reports/brute-force-report.md
+## Key Findings
+- Nmap SYN scan leaves zero traces in default Windows Event Logs
+- SSH brute force detected via EventCode 4625 flood (12 attempts/second)
+- Windows 11 Home has significant logging limitations vs Enterprise
+- Sysmon required for complete attack visibility
+
+## SPL Queries
+Full query library: [splunk-queries/spl-library.md](splunk-queries/spl-library.md)
+
+## Setup Guide
+Full setup instructions: [setup/01-splunk-install.md](setup/01-splunk-install.md)
+
+## Planned Improvements
+- Add second laptop as dedicated target machine
+- Deploy Sysmon for network connection logging
+- Enable Windows Firewall logging
+- Simulate additional attacks: malware traffic, lateral movement
